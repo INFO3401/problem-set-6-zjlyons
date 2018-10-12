@@ -38,16 +38,20 @@ generateSimpleCSV('wordcounts.csv', wordcount)
 ################################################################################
 # PART 3
 ################################################################################
+import os
+from os import listdir
+from os import chdir
+
 def countWordsMany(directory): 
-    # This function should create a dictionary of word count dictionaries
-    # The dictionary should have one dictionary per file in the directory
-    # Each entry in the dictionary should be a word count dictionary
-    # Inputs: A directory containing a set of text files
-    # Outputs: A dictionary containing a word count dictionary for each
-    #          text file in the directory
-    #
-    #
-    
+    dir_list = os.listdir(directory)
+    wordCountDict = {}
+    for file in dir_list:
+        eachWordCount = countWordsUnstructured(file)
+        wordCountDict[file] += eachWordCount
+    return wordCountDict
+ 
+
+countWordsMany
 # Test your part 3 code below
 
 ################################################################################
