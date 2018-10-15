@@ -38,6 +38,7 @@ generateSimpleCSV('wordcounts.csv', wordcount)
 ################################################################################
 # PART 3
 ################################################################################
+
 import os
 from os import listdir
 from os import chdir
@@ -46,30 +47,38 @@ def countWordsMany(directory):
     dir_list = os.listdir(directory)
     wordCountDict = {}
     for file in dir_list:
-        eachWordCount = countWordsUnstructured(file)
-        wordCountDict[file] += eachWordCount
+        eachWordCount = countWordsUnstructured(directory + '/' + file)
+        wordCountDict[file] = eachWordCount
     return wordCountDict
- 
 
-countWordsMany
-# Test your part 3 code below
+all_dicts = countWordsMany('./SOTU')
+
 
 ################################################################################
 # PART 4
 ################################################################################
-# def generateDirectoryCSV(wordCounts, targetfile): 
-    # This function should create a CSV containing the word counts generated in
-    # part 3 with the header: 
-    # Filename, Word, Count
-    # Inputs: A word count dictionary and a name for the target file
-    # Outputs: A CSV file named targetfile containing the word count data
-    
-# Test your part 4 code below
+def generateDirectoryCSV(wordCounts, targetfile): 
+    CSVfile=open(targetfile, 'w')
+    CSVfile.write("filename, word, count\n")
+    for wordfile, dict in wordCounts.items():
+        for word, count in dict.items():
+            CSVfile.write(wordfile + ',' + str(word) + ',' + str(count) + '\n')
+    CSVfile.close()
+    return 
+
+generateDirectoryCSV(all_dicts, 'targetfile.csv')
     
 ################################################################################
 # PART 5
 ################################################################################
-# def generateJSONFile(wordCounts, targetfile): 
+def generateJSONFile(wordCounts, targetfile): 
+    file = open(targetfile, "w")
+    file.write(str(wordCounts).replace("\'", "\""))
+    
+    file.close
+    return file
+
+generateJSONFile(all_dicts,'targetfile.json')
     # This function should create an containing the word counts generated in
     # part 3. Architect your JSON file such that the hierarchy will allow
     # the user to quickly navigate and compare word counts between files. 
