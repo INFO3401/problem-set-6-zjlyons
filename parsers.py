@@ -1,6 +1,9 @@
 ################################################################################
 # PART #1
 ################################################################################
+
+# I worked with Steven, Harold, Justin, and Luke. 
+
 import csv
 import pandas as pd
 
@@ -59,10 +62,10 @@ all_dicts = countWordsMany('./SOTU')
 ################################################################################
 def generateDirectoryCSV(wordCounts, targetfile): 
     CSVfile=open(targetfile, 'w')
-    CSVfile.write("filename, word, count\n")
+    CSVfile.write("filename, Word, Count\n")
     for wordfile, dict in wordCounts.items():
         for word, count in dict.items():
-            CSVfile.write(wordfile + ',' + str(word) + ',' + str(count) + '\n')
+            CSVfile.write(wordfile + ',' + str(word) + ',' + str(count) + "n")
     CSVfile.close()
     return 
 
@@ -79,30 +82,72 @@ def generateJSONFile(wordCounts, targetfile):
     return file
 
 generateJSONFile(all_dicts,'targetfile.json')
-    # This function should create an containing the word counts generated in
-    # part 3. Architect your JSON file such that the hierarchy will allow
-    # the user to quickly navigate and compare word counts between files. 
-    # Inputs: A word count dictionary and a name for the target file
-    # Outputs: An JSON file named targetfile containing the word count data
     
-# Test your part 5 code below
 
 ################################################################################
 # PART 6
 ################################################################################
-# def searchCSV(csvfile, word): 
-    # This function should search a CSV file from part 4 and find the filename
-    # with the largest count of a specified word
-    # Inputs: A CSV file to search and a word to search for
-    # Outputs: The filename containing the highest count of the target word
-    
-# def searchJSON(JSONfile, word): 
-    # This function should search a JSON file from part 5 and find the filename
-    # with the largest count of a specified word
-    # Inputs: An JSON file to search and a word to search for
-    # Outputs: The filename containing the highest count of the target word
-    
-# Test your part 6 code to find which file has the highest count of a given word
+def searchCSV(csvfile, word): 
+    largest_file= ""
+    largest_count=0
+    with open(csvfile, 'rt') as csv_file:
+        file_read = csv.reader(csv_file, delimiter = ',')
+        for line in file_read:
+            if line[1] == word:
+                if int(line[2]) > largest_count:
+                    largest_count=int(line[2])
+                    largest_file=line[0]
+      
+        return largest_file
+        
+        
+print(searchCSV("targetfile.csv", "Congress"))
 
-# +1 bonus point for figuring out how many datapoints you had to process to 
-# compute this value
+import json
+
+def searchJSON(JSONfile, word): 
+    largest_file= ""
+    largest_count=0
+    with open(JSONfile) as json_file:
+        read_data= json.load(json_file, delimiter = ':')
+        for file in read_data:
+            if word in read_data[file] and read_data[file][word] > largest_count:
+                largest_count=read_data[file][word]
+                largest_file=file
+        return largest_file
+        json_file.close()
+
+
+print(searchJSON("targetfile.json", "Congress"))
+    
+#Schema
+
+#Table 1 : "SOTU_word_count"
+    # "filename" (text)
+    # "word" (text)
+    # "count" (integer)
+    
+#Table 2 : "US_President_data"
+    # "index" (integer)
+    # "number" (integer)
+    # "start" (date)
+    # "end" (date)
+    # "president" (text)
+    # "prior" (text)
+    # "party" (text)
+    # "vice" (text)
+
+
+
+#The tables can be joined by the president's name, and the date of speech/date of presidency. 
+
+import sqlite3
+
+conn = sqlite3.connect('POTUS_SOTU.db')
+c = conn.cursor()
+
+c.execute('''CREATE TABLE wordCounts (filename, word, count)''')
+c.execute('''CREATE TABLE presidentInfo(index, number, start, end, president, prior, party, vice )''')
+
+conn.commit()
+conn.close()
